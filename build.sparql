@@ -1,0 +1,439 @@
+# IEDB GAZ SPARQL
+#
+# Use SPARQL INSERT to build a new graph
+# containing just the parts of GAZ that we want.
+#
+# Maintenance should only require adding terms to either:
+#
+# - the upper "grouping" terms (equivalent classes)
+# - the lower "leaf" terms, for individual countries
+
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX GAZ: <http://purl.obolibrary.org/obo/GAZ_>
+PREFIX RO: <http://purl.obolibrary.org/obo/RO_>
+PREFIX IAO: <http://purl.obolibrary.org/obo/IAO_>
+
+
+### Step 0: Start with a clean slate.
+DROP GRAPH <http://www.iedb.org/dev/iedb-gaz>;
+
+
+### Step 1: Add the root node.
+INSERT DATA {
+  GRAPH <http://www.iedb.org/dev/iedb-gaz> {
+    GAZ:00000448 rdf:type owl:Class . # geographic location
+    GAZ:Oceanic_Island rdf:type owl:Class ; # Oceanic Island
+      rdfs:label "Oceanic Island" ;
+      rdfs:subClassOf GAZ:00000448 .
+  }
+};
+
+
+### Step 2: Add the upper-level nodes.
+# We treat each as a class instead of an individual.
+# Each of them is equivalent to 'located_in some [itself]'.
+INSERT {
+  GRAPH <http://www.iedb.org/dev/iedb-gaz> {
+    ?upper rdf:type owl:Class ;
+      owl:equivalentClass [
+        rdf:type owl:Restriction ;
+        owl:onProperty RO:0001025 ;
+        owl:someValuesFrom ?upper
+      ] .
+  }
+}
+WHERE {
+  VALUES ?upper {
+    GAZ:00000457 # - Africa
+    GAZ:00000555 # -- North Africa
+    GAZ:00000587 # -- Sub-Saharan Africa
+    GAZ:00000588 # --- Central Africa
+    GAZ:00000556 # --- East Africa
+    GAZ:00000553 # --- South Africa
+    GAZ:00000554 # --- West Africa
+    GAZ:00000460 # - Eurasia
+    GAZ:00000465 # -- Asia
+    GAZ:00002463 # --- Central Asia
+    GAZ:00002471 # --- East Asia
+    GAZ:00002846 # --- Northeast Asia
+    GAZ:00002472 # --- South Asia
+    GAZ:00000559 # --- Southeast Asia
+    GAZ:00003727 # ---- Indonesia
+    GAZ:00005200 # ---- New Guinea
+    GAZ:00002464 # -- Southwest Asia
+    GAZ:00002469 # -- Caucasus
+    GAZ:00000464 # -- Europe
+    GAZ:00002637 # --- United Kingdom
+    GAZ:00000458 # - North America
+    GAZ:00002891 # -- Central America
+    GAZ:00000468 # - Oceania
+    GAZ:00005863 # -- Australasia
+    GAZ:00005860 # -- Melanesia
+    GAZ:00000459 # - South America
+    #GAZ:00003769 # - West Indies
+  }
+};
+
+
+### Step 3: Add the lower-level (leaf) nodes.
+# We treat each as a class instead of an individual.
+# Each is a subclass of 'geographic location'.
+INSERT {
+  GRAPH <http://www.iedb.org/dev/iedb-gaz> {
+    ?lower rdf:type owl:Class .
+  }
+}
+WHERE {
+  VALUES ?lower {
+    GAZ:00000462 # Antarctica
+    GAZ:00000463 # Australia
+    GAZ:00000469 # New Zealand
+    GAZ:00000558 # Turkey
+    GAZ:00000560 # Sudan
+    GAZ:00000561 # Egypt in Africa
+    GAZ:00000562 # Tunisia
+    GAZ:00000563 # Algeria
+    GAZ:00000564 # Western Sahara
+    GAZ:00000565 # Morocco
+    GAZ:00000566 # Libya
+    GAZ:00000567 # Ethiopia
+    GAZ:00000581 # Eritrea
+    GAZ:00000582 # Djibouti
+    GAZ:00000583 # Mauritania
+    GAZ:00000584 # Mali
+    GAZ:00000585 # Niger
+    GAZ:00000586 # Chad
+    GAZ:00000843 # Iceland
+    GAZ:00000904 # Benin
+    GAZ:00000905 # Burkina Faso
+    GAZ:00000906 # Cote d'Ivoire
+    GAZ:00000907 # Gambia
+    GAZ:00000908 # Ghana
+    GAZ:00000909 # Guinea
+    GAZ:00000910 # Guinea-Bissau
+    GAZ:00000911 # Liberia
+    GAZ:00000912 # Nigeria
+    GAZ:00000913 # Senegal
+    GAZ:00000914 # Sierra Leone
+    GAZ:00000915 # Togo
+    GAZ:00001086 # Democratic Republic of the Congo
+    GAZ:00001087 # Rwanda
+    GAZ:00001088 # Republic of Congo
+    GAZ:00001089 # Central African Republic
+    GAZ:00001090 # Burundi
+    GAZ:00001091 # Equatorial Guinea
+    GAZ:00001092 # Gabon
+    GAZ:00001093 # Cameroon
+    GAZ:00001094 # Republic of South Africa
+    GAZ:00001095 # Angola
+    GAZ:00001096 # Namibia
+    GAZ:00001097 # Botswana
+    GAZ:00001098 # Lesotho
+    GAZ:00001099 # Swaziland
+    GAZ:00001100 # Mozambique
+    GAZ:00001101 # Kenya
+    GAZ:00001102 # Uganda
+    GAZ:00001103 # Tanzania
+    GAZ:00001104 # Somalia
+    GAZ:00001105 # Malawi
+    GAZ:00001106 # Zimbabwe
+    GAZ:00001107 # Zambia
+    GAZ:00001108 # Madagascar
+    GAZ:00001227 # Cape Verde
+    GAZ:00001507 # Greenland
+    GAZ:00002473 # Jordan
+    GAZ:00002474 # Syria
+    GAZ:00002475 # Palestinian Territories
+    GAZ:00002476 # Israel
+    GAZ:00002478 # Lebanon
+    GAZ:00002511 # Bolivia
+    GAZ:00002522 # Guyana
+    GAZ:00002525 # Suriname
+    GAZ:00002560 # Canada
+    GAZ:00002638 # Northern Ireland
+    GAZ:00002639 # Scotland
+    GAZ:00002640 # Wales
+    GAZ:00002641 # England
+    GAZ:00002646 # Germany
+    GAZ:00002650 # Italy
+    GAZ:00002719 # Croatia
+    GAZ:00002721 # Russia
+    GAZ:00002724 # Ukraine
+    GAZ:00002729 # Sweden
+    GAZ:00002733 # The Bahamas
+    GAZ:00002747 # Japan
+    GAZ:00002801 # North Korea
+    GAZ:00002802 # South Korea
+    GAZ:00002825 # Chile
+    GAZ:00002828 # Brazil
+    GAZ:00002839 # India
+    GAZ:00002845 # China
+    GAZ:00002852 # Mexico
+    GAZ:00002892 # Panama
+    GAZ:00002894 # Honduras
+    GAZ:00002901 # Costa Rica
+    GAZ:00002912 # Ecuador
+    GAZ:00002928 # Argentina
+    GAZ:00002929 # Colombia
+    GAZ:00002930 # Uruguay
+    GAZ:00002931 # Venezuela
+    GAZ:00002932 # Peru
+    GAZ:00002933 # Paraguay
+    GAZ:00002934 # Belize
+    GAZ:00002935 # El Salvador
+    GAZ:00002936 # Guatemala
+    GAZ:00002937 # Finland
+    GAZ:00002938 # Belgium
+    GAZ:00002939 # Poland
+    GAZ:00002941 # Switzerland
+    GAZ:00002942 # Austria
+    GAZ:00002943 # Republic of Ireland
+    GAZ:00002945 # Greece
+    GAZ:00002946 # The Netherlands
+    GAZ:00002947 # Luxembourg
+    GAZ:00002948 # Andorra
+    GAZ:00002950 # Bulgaria
+    GAZ:00002951 # Romania
+    GAZ:00002952 # Hungary
+    GAZ:00002953 # Albania
+    GAZ:00002954 # Czech Republic
+    GAZ:00002955 # Slovenia
+    GAZ:00002956 # Slovak Republic
+    GAZ:00002957 # Serbia
+    GAZ:00002958 # Latvia
+    GAZ:00002959 # Estonia
+    GAZ:00002960 # Lithuania
+    GAZ:00002978 # Nicaragua
+    GAZ:00003102 # San Marino
+    GAZ:00003734 # Bali
+    GAZ:00003744 # Thailand
+    GAZ:00003756 # Viet Nam
+    GAZ:00003762 # Cuba
+    GAZ:00003767 # Trinidad and Tobago
+    GAZ:00003781 # Jamaica
+    GAZ:00003857 # Monaco
+    GAZ:00003858 # Liechtenstein
+    GAZ:00003897 # Moldova
+    GAZ:00003901 # Brunei Darussalam
+    GAZ:00003902 # Malaysia
+    GAZ:00003922 # Papua New Guinea
+    GAZ:00003923 # Singapore
+    GAZ:00003924 # Sri Lanka
+    GAZ:00003936 # Metropolitan Spain
+    GAZ:00003937 # contiguous United States of America
+    GAZ:00003940 # Metropolitan France
+    GAZ:00003952 # Dominican Republic
+    GAZ:00003953 # Haiti
+    GAZ:00004007 # Republic of Cyprus
+    GAZ:00004094 # Armenia
+    GAZ:00004126 # Metropolitan Portugal
+    GAZ:00004399 # Nepal
+    GAZ:00004474 # Iran
+    GAZ:00004483 # Iraq
+    GAZ:00004525 # The Philippines
+    GAZ:00004941 # Azerbaijan
+    GAZ:00004942 # Georgia
+    GAZ:00004979 # Uzbekistan
+    GAZ:00004999 # Kazakhstan
+    GAZ:00005018 # Turkmenistan
+    GAZ:00005246 # Pakistan
+    GAZ:00005279 # Saudi Arabia
+    GAZ:00005281 # Bahrain
+    GAZ:00005282 # United Arab Emirates
+    GAZ:00005283 # Oman
+    GAZ:00005284 # Yemen
+    GAZ:00005285 # Kuwait
+    GAZ:00005286 # Qatar
+    GAZ:00005328 # Tahiti
+    GAZ:00005820 # Comoros
+    GAZ:00005851 # Metropolitan Norway
+    GAZ:00005852 # Metropolitan Denmark
+    GAZ:00005861 # Polynesia
+    GAZ:00005862 # Micronesia
+    GAZ:00006882 # Afghanistan
+    GAZ:00006886 # Belarus
+    GAZ:00006887 # Bosnia and Herzegovina
+    GAZ:00006888 # Cambodia
+    GAZ:00006889 # Laos
+    GAZ:00006891 # Fiji
+    GAZ:00006893 # Kyrgyzstan
+    GAZ:00006895 # Macedonia
+    GAZ:00006898 # Montenegro
+    GAZ:00006899 # Myanmar
+    GAZ:00006910 # Samoa
+    GAZ:00006912 # Tajikistan
+    GAZ:00006913 # Timor-Leste
+    GAZ:00006916 # Tonga
+    GAZ:00006918 # Vanuatu
+    GAZ:00008744 # Mongolia
+    GAZ:00011337 # Kosovo
+    GAZ:00012582 # Country of Curacao
+    GAZ:00024383 # Java
+    GAZ:00024432 # Sumatra
+    GAZ:00058174 # Nagorno-Karabakh Republic
+    GAZ:00233439 # South Sudan
+    GAZ:02000573 # Grenada
+  }
+};
+
+
+## Step 4: Add location links.
+# We do this in three sub-steps: parents, grandparents, and greatgrandparents.
+# I couldn't figure out a more elegant way in pure SPARQL
+# that would find only the shortest path to one of our selected upper nodes.
+
+### Step 4A: Add parent links.
+# Use location_of links from GAZ to assert 'located_in some [parent]' axioms.
+INSERT {
+  GRAPH <http://www.iedb.org/dev/iedb-gaz> {
+    ?node rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty RO:0001025 ;
+      owl:someValuesFrom ?parent
+    ] .
+  }
+}
+WHERE {
+  SELECT DISTINCT ?node ?parent
+  WHERE {
+    GRAPH <http://www.iedb.org/dev/iedb-gaz> {
+      ?node rdf:type owl:Class .
+      ?parent rdf:type owl:Class .
+    }
+    GRAPH <http://www.iedb.org/dev/gaz> {
+      ?node RO:0001025 ?parent .
+    }
+  }
+};
+
+### Step 4B: Add grandparent links.
+# Use location_of links from GAZ to assert 'located_in some [grandparent]' axioms.
+INSERT {
+  GRAPH <http://www.iedb.org/dev/iedb-gaz> {
+    ?node rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty RO:0001025 ;
+      owl:someValuesFrom ?grandparent
+    ] .
+  }
+}
+WHERE {
+  SELECT DISTINCT ?node ?grandparent
+  WHERE {
+    GRAPH <http://www.iedb.org/dev/iedb-gaz> {
+      ?node rdf:type owl:Class .
+      ?grandparent rdf:type owl:Class .
+      MINUS {
+        ?node rdfs:subClassOf ?parent .
+      }
+    }
+    GRAPH <http://www.iedb.org/dev/gaz> {
+      ?node RO:0001025 / RO:0001025 ?grandparent .
+    }
+  }
+};
+
+
+### Step 4C: Add greatgrandparent links.
+# Use location_of links from GAZ to assert 'located_in some [greatgrandparent]' axioms.
+INSERT {
+  GRAPH <http://www.iedb.org/dev/iedb-gaz> {
+    ?node rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty RO:0001025 ;
+      owl:someValuesFrom ?greatgrandparent
+    ] .
+  }
+}
+WHERE {
+  SELECT DISTINCT ?node ?greatgrandparent
+  WHERE {
+    GRAPH <http://www.iedb.org/dev/iedb-gaz> {
+      ?node rdf:type owl:Class .
+      ?greatgrandparent rdf:type owl:Class .
+      MINUS {
+        ?node rdfs:subClassOf ?parent .
+      }
+    }
+    GRAPH <http://www.iedb.org/dev/gaz> {
+      ?node RO:0001025 / RO:0001025 / RO:0001025 ?greatgrandparent .
+    }
+  }
+};
+
+
+### Step 4D: Add to Oceanic Island.
+# If the node hasn't got a home yet, put it under Oceanic Island.
+INSERT {
+  GRAPH <http://www.iedb.org/dev/iedb-gaz> {
+    ?node rdfs:subClassOf GAZ:Oceanic_Island .
+  }
+}
+WHERE {
+  SELECT DISTINCT ?node
+  WHERE {
+    GRAPH <http://www.iedb.org/dev/iedb-gaz> {
+      ?node rdf:type owl:Class .
+      FILTER (?node != GAZ:00000448) # geographic location
+      MINUS {
+        ?node rdfs:subClassOf ?parent .
+      }
+      MINUS {
+        ?node owl:equivalentClass ?equivalent .
+      }
+    }
+  }
+};
+
+
+### Step 5: Everything is a geographic location.
+# (Except 'geographic location'.)
+INSERT {
+  GRAPH <http://www.iedb.org/dev/iedb-gaz> {
+    ?node rdfs:subClassOf GAZ:00000448 . # geographic location
+  }
+}
+WHERE {
+  GRAPH <http://www.iedb.org/dev/iedb-gaz> {
+    ?node rdf:type owl:Class .
+    FILTER (?node != GAZ:00000448) # geographic location
+  }
+};
+
+
+### Step 6: Copy annotations.
+# For every node in the graph, copy its annotations from GAZ.
+INSERT {
+  GRAPH <http://www.iedb.org/dev/iedb-gaz> {
+    ?s ?p ?o .
+  }
+}
+WHERE {
+  GRAPH <http://www.iedb.org/dev/iedb-gaz> {
+    ?s rdf:type owl:Class .
+  }
+  GRAPH <http://www.iedb.org/dev/gaz> {
+    ?s ?p ?o .
+    FILTER (?p != rdf:type)
+    FILTER (?p != rdfs:subClassOf)
+    FILTER (?p != owl:equivalentClass)
+    FILTER (?p != RO:0001025)
+  }
+};
+
+
+### Step 7: Add other content.
+INSERT DATA {
+  GRAPH <http://www.iedb.org/dev/iedb-gaz> {
+    <http://www.iedb.org/dev/iedb-gaz> rdf:type owl:Ontology ;
+      owl:versionIRI <http://www.iedb.org/dev/iedb-gaz#VERSION> ;
+      rdfs:comment "This is a subset of the GAZ ontology built for the Immune Epitope Database (IEDB). See https://github.com/IEDB/GAZ" ;
+      rdfs:comment "Generated on VERSION" .
+    RO:0001025 rdf:type owl:ObjectProperty ;
+      rdfs:label "located_in" .
+    IAO:0000115 rdf:type owl:AnnotationProperty ;
+      rdfs:label "definition" .
+  }
+};
