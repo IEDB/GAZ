@@ -71,5 +71,5 @@ build/iedb_gaz.ttl: build.sparql | build
 	> $@
 
 build/iedb_gaz.owl: build/iedb_gaz.ttl | lib/robot.jar
-	$(ROBOT) convert -i $< -o $@
+	$(ROBOT) reason -r hermit -i $< -o $@
 
