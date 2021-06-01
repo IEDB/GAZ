@@ -41,7 +41,7 @@ lib/gaz.owl: | lib
 ## Fetch ROBOT
 
 lib/robot.jar: | lib
-	curl -L -o $@ https://build.berkeleybop.org/job/robot/lastSuccessfulBuild/artifact/bin/robot.jar
+	curl -L -o $@ https://github.com/ontodev/robot/releases/download/v1.8.1/robot.jar
 
 ROBOT := java -jar lib/robot.jar
 
@@ -49,7 +49,7 @@ ROBOT := java -jar lib/robot.jar
 ## Fetch and run Blazgraph
 
 lib/blazegraph.jar: | lib
-	curl -o $@ -L https://sourceforge.net/projects/bigdata/files/latest/download
+	curl -o $@ -L https://github.com/blazegraph/database/releases/download/BLAZEGRAPH_2_1_6_RC/blazegraph.jar
 
 lib/blazegraph.jnl: lib/blazegraph.jar blazegraph.properties lib/gaz.owl
 	java -Xmx4g -cp lib/blazegraph.jar com.bigdata.rdf.store.DataLoader -defaultGraph "http://www.iedb.org/dev/gaz" blazegraph.properties lib/gaz.owl
